@@ -1,5 +1,10 @@
 package com.martinso.bankapp.dtos.response;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+@Data
 public class LoginResponse {
 
 	private String message;

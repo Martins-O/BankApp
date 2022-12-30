@@ -6,6 +6,7 @@ import com.martinso.bankapp.dtos.request.*;
 import com.martinso.bankapp.dtos.response.*;
 import com.martinso.bankapp.exception.EmailAlreadyExistsException;
 import com.martinso.bankapp.exception.UpdateException;
+import com.martinso.bankapp.exception.UserNotFoundException;
 import com.martinso.bankapp.utils.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,12 +51,23 @@ public class BankUserDetailsServiceImpl implements BankUserDetailsService{
 
 	@Override
 	public ResetPasswordResponse resetPassword(ResetPasswordRequest request) {
-
-		return null;
+		Optional<BankUserDetails> existingUser =
+			userDetailsRepository.findByEmail(request.getEmail());
+		if(existingUser.isEmpty()){
+			throw new UserNotFoundException("please enter a valid user mail or register!");
+		}
+		BankUserDetails details = modelMapper.mapUser(request);
+		BankUserDetails resetPassword = userDetailsRepository.save(details);
+		return new ResetPasswordResponse("Password reset successfully", resetPassword.getEmail());
 	}
 
 	@Override
 	public ChangePasswordResponse changePassword(ChangePasswordRequest request) {
-		return null;
+		Optional<BankUserDetails> existingUser =
+			userDetailsRepository.findByEmail(request.getEmail());
+		BankUserDetails details = modelMapper.mapUser(request);
+		BankUserDetails changePassword = userDetailsRepository.save(details);
+		return new ChangePasswordResponse("Password change successfully!", changePassword.getEmail());
 	}
+
 }

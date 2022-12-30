@@ -5,6 +5,7 @@ import com.martinso.bankapp.utils.Address;
 import com.martinso.bankapp.utils.Gender;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class RegisterRequest {
