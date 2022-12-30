@@ -1,6 +1,7 @@
 package com.martinso.bankapp.exception;
 
-public class LoginException extends Throwable {
-	public LoginException(String thisUserDoesNotExist) {
+public class UpdateException extends BankAppException {
+	public UpdateException(String message) {
+		super(message);
 	}
 }
