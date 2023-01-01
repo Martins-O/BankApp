@@ -1,7 +1,10 @@
 package com.martinso.bankapp.utils;
 
+import com.martinso.bankapp.data.model.Account;
 import com.martinso.bankapp.data.model.BankUserDetails;
 import com.martinso.bankapp.dtos.request.*;
+
+import java.math.BigDecimal;
 
 public class ModelMapper {
 
@@ -17,6 +20,7 @@ public class ModelMapper {
 		user.setPasswordConfirmation(request.getPasswordConfirmation());
 		user.setAddress(request.getAddress());
 		user.setDateOfBirth(request.getDateOfBirth());
+		user.getAccountNumber();
 		return user;
 	}
 
@@ -53,5 +57,32 @@ public class ModelMapper {
 		user.setPassword(request.getNewPassword());
 		user.setPasswordConfirmation(request.getNewPasswordConfirmation());
 		return user;
+	}
+
+	public Account mapAccount(DepositRequest request) {
+		Account account = new Account();
+		account.setOwnersName(request.getOwnersName());
+		account.setAmount(request.getAmount());
+		BigDecimal newBalance = account.getAccountBalance().add(request.getAmount());
+		account.setAccountBalance(newBalance);
+		return account;
+	}
+
+	public Account mapAccount(WithdrawRequest request) {
+		Account account = new Account();
+		account.setOwnersName(request.getOwnersName());
+		account.setAmount(request.getAmount());
+		BigDecimal newBalance = account.getAccountBalance().subtract(request.getAmount());
+		account.setAccountBalance(newBalance);
+		return account;
+	}
+	public Account mapAccount(TransferRequest request){
+		Account sender = new Account();
+		WithdrawRequest requestWithdraw = new WithdrawRequest();
+		mapAccount(requestWithdraw);
+		Account recipient = new Account();
+		DepositRequest requestDeposit = new DepositRequest();
+		mapAccount(requestDeposit);
+		return sender;
 	}
 }

@@ -14,4 +14,5 @@ public interface BankUserDetailsService {
 	ResetPasswordResponse resetPassword(ResetPasswordRequest request);
 
 	ChangePasswordResponse changePassword(ChangePasswordRequest request);
+
 }

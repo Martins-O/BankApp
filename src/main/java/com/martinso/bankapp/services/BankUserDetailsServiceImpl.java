@@ -27,7 +27,7 @@ public class BankUserDetailsServiceImpl implements BankUserDetailsService{
 		}
 		BankUserDetails userDetails = modelMapper.mapUser(request);
 		BankUserDetails savedDetails = userDetailsRepository.save(userDetails);
-		return new RegisterResponse("Registration successfully", savedDetails.getEmail());
+		return new RegisterResponse("Registration successfully", savedDetails.getEmail(), savedDetails.getAccountNumber());
 	}
 
 	@Override

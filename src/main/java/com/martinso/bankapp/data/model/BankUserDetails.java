@@ -5,6 +5,8 @@ import com.martinso.bankapp.utils.Gender;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
+import java.security.SecureRandom;
+
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -14,17 +16,28 @@ public class BankUserDetails {
 	private String firstName;
 	@NonNull
 	private String lastName;
-	@NonNull
 	@Id
 	private String email;
-	@NonNull
 	private String phoneNumber;
-	@NonNull
 	private String dateOfBirth;
 	private Gender gender;
 	private Address address;
-	@NonNull
 	private String password;
-	@NonNull
 	private String passwordConfirmation;
+	@NonNull
+	private  String accountNumber;
+	private String generateAccountNumber() {
+		SecureRandom random = new SecureRandom();
+		long accountNumber = random.nextLong();
+		accountNumber = Math.abs(accountNumber % 100000000000L);
+		return String.format("%010d", accountNumber);
+	}
+
+	public String getAccountNumber() {
+		String acct = generateAccountNumber();
+		this.accountNumber = String.valueOf(acct);
+		return accountNumber;
+	}
+
+
 }
