@@ -10,6 +10,9 @@ import com.martinso.bankapp.dtos.response.DepositResponse;
 import com.martinso.bankapp.dtos.response.TransferResponse;
 import com.martinso.bankapp.dtos.response.WithdrawResponse;
 import com.martinso.bankapp.exception.AccountUserExecption;
+import com.martinso.bankapp.exception.InavlidAmountException;
+import com.martinso.bankapp.exception.UnsupportedDepositException;
+import com.martinso.bankapp.exception.UserNotFoundException;
 import com.martinso.bankapp.utils.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,38 +28,51 @@ public class AccountServiceImpl implements AccountService{
 	private final ModelMapper modelMapper = new ModelMapper();
 	@Override
 	public DepositResponse deposit(DepositRequest request) {
-		Optional<Account> user =
-			accountRepositories.FindByAccName(request.getOwnersName());
-		if (user.isEmpty()){
-			throw new AccountUserExecption("Account cannot be found");
+		Account depositAccount = new Account();
+		depositAccount = accountRepositories.findAccountByOwnersName(depositAccount.getOwnersName());
+		verifyThatAccountExists(depositAccount);
+		if((request.getAmount().compareTo(BigDecimal.valueOf(1))) <= 0){
+			throw new UnsupportedDepositException("Error!!! Amount too low!");
 		}
-		Account account = modelMapper.mapAccount(request);
-		Account depositAccount = accountRepositories.save(account);
-		return new DepositResponse("Deposit successfully", depositAccount.getOwnersName());
+		depositAccount.setAccountBalance(depositAccount.getAccountBalance().
+			add(request.getAmount()));
+		return new DepositResponse("Deposit successfully",
+			depositAccount.getOwnersName());
+
+	}
+
+	private Account verifyThatAccountExists(Account depositAccount) {
+		Account account = new Account();
+		if(account.getOwnersName() != depositAccount.getOwnersName()) {
+			throw new UserNotFoundException("User Not Found");
+		}
+		return new Account();
 	}
 
 	@Override
 	public WithdrawResponse withdraw(WithdrawRequest request) {
-		Optional<Account> accAmount =
-			accountRepositories.FindByAccName(request.getOwnersName());
-		if (accAmount.isEmpty()){
-			throw new AccountUserExecption("Account cannot be found");
+		Account account = new Account();
+		account = accountRepositories.findAccountByOwnersName(account.getOwnersName());
+		verifyThatAccountExists(account);
+		if(request.getAmount().compareTo(account.getAccountBalance()) > 0){
+			throw new InavlidAmountException("Insufficient amount");
 		}
-		Account account = modelMapper.mapAccount(request);
-		Account withdrawAmount = accountRepositories.save(account);
-		return new WithdrawResponse("Withdraw succcessfully", withdrawAmount.getOwnersName());
+		account.setAccountBalance(account.getAccountBalance().subtract(request.getAmount()));
+		return new WithdrawResponse("Withdrawal successful", account.getOwnersName());
 	}
 
 	@Override
 	public TransferResponse transfer(TransferRequest request) {
-		Optional<Account> withdraw =
-			accountRepositories.FindByAccName(request.getOwnersName());
-		if(withdraw.isEmpty()) {
-			throw new AccountUserExecption("Account cannot be found");
-		}
-		Account account = modelMapper.mapAccount(request);
-		Account transfer = accountRepositories.save(account);
-		return new TransferResponse("Transfer succcessfully", transfer.getOwnersName());
+		Account account = new Account();
+		account = accountRepositories.findAccountByOwnersName(account.getOwnersName());
+		verifyThatAccountExists(account);
+		Account sender = new Account();
+		WithdrawRequest requestWithdraw = new WithdrawRequest();
+		withdraw(requestWithdraw);
+		Account recipient = new Account();
+		DepositRequest requestDeposit = new DepositRequest();
+		deposit(requestDeposit);
+		return new TransferResponse("Transfer done successfully", account.getOwnersName());
 	}
 
 }

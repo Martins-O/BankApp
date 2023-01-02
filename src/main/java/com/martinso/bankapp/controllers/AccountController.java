@@ -5,6 +5,7 @@ import com.martinso.bankapp.dtos.response.DepositResponse;
 import com.martinso.bankapp.exception.DepositNotAllowedException;
 import com.martinso.bankapp.services.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("account/")
 public class AccountController {
 
+	@Autowired
 	private final AccountService account;
 
 	@PostMapping("deposit/")

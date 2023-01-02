@@ -7,5 +7,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface AccountRepositories extends MongoRepository<Account, String> {
-	Optional<Account> FindByAccName(BankUserDetails ownersName);
+
+	Account findAccountByOwnersName(BankUserDetails ownersName);
 }

@@ -9,7 +9,7 @@ import java.security.SecureRandom;
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
+
 @NoArgsConstructor
 public class BankUserDetails {
 	@NonNull
@@ -37,6 +37,12 @@ public class BankUserDetails {
 		String acct = generateAccountNumber();
 		this.accountNumber = String.valueOf(acct);
 		return accountNumber;
+	}
+
+	public BankUserDetails(String firstName, String lastName, String accountNumber){
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.accountNumber = accountNumber;
 	}
 
 
